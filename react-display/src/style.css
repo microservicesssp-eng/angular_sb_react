@@ -1,0 +1,37 @@
+body {
+  margin: 0;
+  padding: 24px;
+  font-family: Arial, sans-serif;
+  color: #222;
+  background: #f4f4f4;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+button {
+  padding: 8px 12px;
+  font: inherit;
+  cursor: pointer;
+}
+
+li {
+  margin: 12px 0;
+  padding: 12px;
+  background: white;
+  border: 1px solid #ddd;
+}
+
+li span {
+  display: block;
+  margin-top: 4px;
+}

@@ -1,0 +1,128 @@
+Учебный проект: Angular + Spring Boot + SQLite + React
+======================================================
+
+Идея проекта
+------------
+Это простая гостевая книга, как в исходном React + Spring Boot проекте,
+но ввод и отображение сообщений разделены между двумя frontend-сервисами:
+
+1. Angular показывает форму и отправляет введённые имя и сообщение.
+2. Spring Boot принимает JSON, пишет время приёма в свою консоль и сохраняет
+   сообщение в локальную базу SQLite.
+3. React запрашивает сохранённые сообщения у Spring Boot и показывает их
+   на странице без времени.
+
+Путь данных:
+Angular form -> HTTP POST/JSON -> Spring Boot REST API -> Spring Data JPA -> SQLite
+React page  <- HTTP GET/JSON  <- Spring Boot REST API
+
+Это три приложения/сервиса, но не Docker-контейнеры. Docker и Docker Compose
+для проекта не используются.
+
+Состав проекта
+--------------
+angular-form/                 Первый frontend: форма на Angular
+  src/app/                    Компонент формы и настройка HTTP-клиента
+  proxy.conf.json             Перенаправляет /api на Spring Boot
+  angular.json                Настройки запуска и сборки Angular
+spring-api/                   Второй сервис: REST API на Spring Boot
+  src/main/java/demo/         Запуск, модель, контроллер и JPA repository
+  src/main/resources/         Настройки Spring и подключения к SQLite
+  data/greetings.db           Локальная база, создаётся при запуске
+react-display/                Третий frontend: просмотр сообщений на React
+  src/main.jsx                Загружает список через GET /api/greetings
+  vite.config.js              Перенаправляет /api на Spring Boot
+
+Что нужно установить
+--------------------
+- Java 17 или новее
+- Maven
+- Node.js 20 или новее и npm
+
+Запуск проекта
+--------------
+Откройте три терминала, по одному на каждый сервис. Docker не требуется.
+
+Терминал 1 — Spring Boot API:
+
+   cd /home/karim/react_ex/angular_sb_react/spring-api
+   mvn spring-boot:run
+
+API будет доступно на http://localhost:8080. При первом старте таблица
+создаётся автоматически, а файл базы появится в spring-api/data/greetings.db.
+При отправке формы в этой консоли появится строка с временем получения,
+именем и сообщением. Остановить сервис: Ctrl+C.
+
+Терминал 2 — Angular форма:
+
+   cd /home/karim/react_ex/angular_sb_react/angular-form
+   npm install
+   npm start
+
+Откройте http://localhost:4200. Заполните имя и сообщение и нажмите
+«Сохранить». Angular отправит их в Spring Boot; успешное сохранение
+подтверждается на странице.
+
+Терминал 3 — React просмотр:
+
+   cd /home/karim/react_ex/angular_sb_react/react-display
+   npm install
+   npm run dev
+
+Откройте http://localhost:5173. Страница загрузит сообщения из Spring Boot.
+Если React уже был открыт до отправки формы, нажмите «Обновить».
+
+Как фронтенды находят Spring Boot
+---------------------------------
+В обоих frontend dev-серверах настроен локальный proxy: браузер обращается
+к /api, а Angular CLI или Vite пересылает запрос на http://localhost:8080.
+Поэтому для учебного запуска Spring Boot и frontend-сервисы должны работать
+одновременно. Отдельная настройка CORS не нужна.
+
+API
+---
+GET  /api/greetings — получить список сообщений.
+POST /api/greetings — сохранить JSON вида:
+  {"name":"Анна","message":"Привет!"}
+
+Контроллер проверяет, что имя и сообщение не пустые. Максимальная длина имени
+80 символов, сообщения — 500 символов. React выводит имя и текст сообщения,
+но не время получения. Время печатает только консоль Spring Boot.
+
+Сборка
+------
+Angular:
+   cd /home/karim/react_ex/angular_sb_react/angular-form
+   npm run build
+
+React:
+   cd /home/karim/react_ex/angular_sb_react/react-display
+   npm run build
+
+Spring Boot:
+   cd /home/karim/react_ex/angular_sb_react/spring-api
+   mvn clean package
+
+Исходный код и база
+-------------------
+Размер проекта на диске зависит от установленных npm-пакетов, результатов
+сборки и числа сохранённых сообщений. Из корневой папки можно посмотреть
+текущий размер:
+
+   cd /home/karim/react_ex/angular_sb_react
+   du -sh .
+
+После установки зависимостей и сборки этот проект занимает около 633 МБ:
+- angular-form/node_modules: около 522 МБ
+- react-display/node_modules: около 46 МБ
+- spring-api/target: около 59 МБ
+- собранные Angular и React приложения: меньше 1 МБ вместе
+- исходники, lock-файлы и SQLite база: около 7 МБ
+
+Это размер на текущем компьютере; он может отличаться в зависимости от
+системы и версий загруженных пакетов. Папки node_modules и target появляются
+после установки/сборки и могут занимать сотни мегабайт.
+
+Сообщения хранятся в spring-api/data/greetings.db. Чтобы сохранить данные,
+не удаляйте этот файл. Резервную копию можно сделать, пока Spring Boot
+остановлен, скопировав файл greetings.db.

@@ -1,0 +1,61 @@
+# Проект: Simple Form JS + Spring Boot (MySQL)
+
+Этот проект демонстрирует передачу данных из HTML-формы через JavaScript (fetch) в Spring Boot приложение и сохранение в MySQL.
+
+## Структура проекта
+- **Backend**: Spring Boot 3.3.4, Spring Data JDBC.
+- **Frontend**: Чистый HTML5, CSS3, JavaScript (Vanilla JS).
+- **База данных**: MySQL.
+
+## Требования
+1. Java 17+
+2. Maven
+3. MySQL Server (запущен локально на порту 3306)
+
+## Настройка базы данных
+В файле `src/main/resources/application.properties` проверьте настройки подключения:
+- `spring.datasource.username` (по умолчанию root)
+- `spring.datasource.password` (укажите ваш пароль)
+
+Приложение само создаст базу `simple_db` и таблицу `simple_users` при запуске (`createDatabaseIfNotExist=true`).
+
+## Как запустить
+
+### Способ 1: Через терминал (Maven)
+1. Перейдите в директорию проекта:
+   ```bash
+   cd /home/karim/html_ex/simple_form_js_sb
+   ```
+2. Запустите приложение:
+   ```bash
+   mvn spring-boot:run
+   ```
+
+### Способ 2: Сборка JAR и запуск
+1. Соберите проект:
+   ```bash
+   mvn clean package
+   ```
+2. Запустите JAR:
+   ```bash
+   java -jar target/simple-form-js-sb-0.0.1-SNAPSHOT.jar
+   ```
+
+## Использование
+1. После запуска откройте браузер: `http://localhost:8080`
+2. Заполните форму (Имя, Фамилия).
+3. Нажмите "Отправить".
+4. JavaScript отправит POST-запрос на `/api/users`.
+5. Проверьте результат в базе данных:
+   ```sql
+   SELECT * FROM simple_db.simple_users;
+   ```
+
+## Элементы проекта
+- `index.html`: Форма регистрации.
+- `style.css`: Оформление.
+- `script.js`: Логика отправки данных (Fetch API).
+- `UserController.java`: REST-контроллер для приема JSON.
+- `SimpleUser.java`: Модель данных.
+- `SimpleUserRepository.java`: Интерфейс для работы с БД.
+- `schema.sql`: Скрипт инициализации таблицы.

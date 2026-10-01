@@ -1,0 +1,33 @@
+<main class="container">
+  <h1>Оставить сообщение</h1>
+  <p>Форма Angular отправит сообщение в Spring Boot.</p>
+
+  <form #greetingForm="ngForm" (ngSubmit)="submit()">
+    <label>
+      Ваше имя
+      <input
+        name="name"
+        [(ngModel)]="form.name"
+        required
+        maxlength="80"
+      >
+    </label>
+
+    <label>
+      Сообщение
+      <textarea
+        name="message"
+        [(ngModel)]="form.message"
+        required
+        maxlength="500"
+        rows="3"
+      ></textarea>
+    </label>
+
+    <button type="submit" [disabled]="greetingForm.invalid || saving">
+      {{ saving ? 'Сохраняем...' : 'Сохранить' }}
+    </button>
+  </form>
+
+  <p role="status" *ngIf="status">{{ status }}</p>
+</main>

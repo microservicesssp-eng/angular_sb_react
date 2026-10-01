@@ -1,0 +1,10 @@
+angular-form/node_modules/
+angular-form/dist/
+react-display/node_modules/
+react-display/dist/
+spring-api/target/
+spring-api/data/*.db
+spring-api/data/*.db-shm
+spring-api/data/*.db-wal
+.idea/
+.vscode/
